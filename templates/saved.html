@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Meow{% endblock %}
+
+{% block content %}
+<h1> Избранное </h1>
+<div class="container">
+    {% for word in words %}
+        <div> {{ word[0] }} </div>
+    {% endfor %}
+
+</div>
+{% endblock %}

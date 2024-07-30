@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}Смысловолк{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="text-center">Смысловолк: абсолютное славянство</h1>
+    {% if flag_admin %}
+    Вы админ!
+    {% endif %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+          <script type="text/javascript" charset="utf-8">
+      var socket = io();
+      var ss = {{ D|tojson | safe}} ;
+      var pp = {{ par|tojson | safe}}
+      function getRandomInt(min, max) {
+              min = Math.ceil(min);
+              max = Math.floor(max);
+              return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+            }
+      var ppp = new Map()
+      for (let i = 1; i <= pp.length; i++){
+        if (pp[i] != '') ppp.set("w" + i, pp[i-1]);
+      }
+      
+    </script>
+    {% for gen in gens %}
+    <div class="card">
+        <div class="card-header">
+          <div style="display: flex; justify-content: flex-end;">
+            <a class="btn btn-primary" href="/edit/{{ gen.id }}" role="button">{% if gen.protected > 0 %}
+              Просмотр {% else %} Редактирование
+            {% endif %} </a>
+          </div>
+  
+          <h1 class="text-center">{{ gens[loop.index-1].name }}
+            
+          </h1>
+        </div>
+        <div class="card-body">
+          
+          <div class="text-center">{{ gen.description }} </div>
+          <hr>
+          <div class="d-grid gap-2 col-6 mx-auto">
+              <button type="button" class="btn btn-primary" id="butt{{ gen.id }}" >Сгенерировать!</button>
+              <h2 class="text-center"><div id="text{{ gen.id }}"> {{ par[loop.index-1] }} </div></h2>
+              <button type="button" class="btn btn-secondary" id="add{{ gen.id }}" disabled>В избранное</button>
+              <div class="text-center"><div id = "s{{ gen.id }}"></div> </div>
+          </div>
+          <hr>
+
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+          <script type="text/javascript" charset="utf-8">
+            {
+              
+              //socket.on('connect', function() {
+                  //socket.emit('my event', {data: 'I\'m connected!'});
+              //});
+              let tobests = document.getElementById("add{{ gen.id }}");
+              let word = document.getElementById("text{{ gen.id }}");
+              let sss = document.getElementById("s{{ gen.id }}");
+              tobests.addEventListener('click', () => {
+                  //console.log('Add message btn is clicked')
+                  //console.log('User typed:', textareaMessage.value)
+
+                  socket.emit('message', { message: word.textContent})
+                  sss.textContent = 'OK'
+              })
+            }
+          </script>
+
+          <script>
+          {
+
+            let it = Number("{{ gen.id }}");
+            
+            
+            let s = ss[it-1];
+            let myButton = document.getElementById("butt{{ gen.id }}");
+            let myText = document.getElementById('text{{ gen.id }}');
+            let sss = document.getElementById("s{{ gen.id }}");
+            let tobests = document.getElementById("add{{ gen.id }}");
+
+            myButton.onclick = function() {
+              myText.textContent = s;
+              let res = "";
+              for (let i = 0; i < s.length; i++){
+                var a = getRandomInt(0, s[i].length-1);
+                if (s[i].length != 1)
+                  res += s[i][a];
+              }
+              //var a = getRandomInt(0, FirstName.length);
+              //var b = getRandomInt(0, SecondName.length);
+              myText.textContent = res;
+              sss.textContent = '';
+              tobests.removeAttribute('disabled');
+              //const data = {
+                //'w{{ gen.id }}': res
+              //};
+              ppp.set('w{{ gen.id }}', res);
+
+              const searchParams = new URLSearchParams(ppp);
+              console.log(searchParams.toString())
+              window.history.pushState('', '', '?' + searchParams);
+              //window.location.search = urlParams;
+
+
+            }
+
+          }
+          </script>
+          
+        </div>
+    </div>
+    {% endfor %}
+    <div class="d-grid gap-2 col-6 mx-auto">
+          <a class="btn btn-primary" href="/create" role="button">New</a>
+    </div>
+
+
+{% endblock %}
