@@ -1,35 +1,22 @@
-from flask import Flask, request, render_template, jsonify
-from models import Artist, Album, Song, Suffix, Generator, db, add_song, savedword
+from flask import Flask, request, render_template
+from models import Suffix, Generator, db, savedword
 from sqlalchemy import select, update, delete
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_socketio import SocketIO, emit
-import json
 
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///music.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///base.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-admin_hash = "scrypt:32768:8:1$eSfltauWyXtE2bwt$abb8875624988f324d7eb3974eafabc2a1255e5f3c7f858601bfc92db2e09800376117c07bfaf4c2022ed8f12d9113ddace9e38f3c573131d87a3c3aaa080372"
+admin_hash = "scrypt:32768:8:1$a0SAnWqFbDDCjesM$4be9a64f90e38115010da84836b9161f846acfeb6fdce1380589a670e0e3f05f9d4a93ef86c7415d5b557f0f018bb2baffd6f290b695e27fb12e3712833e630f"
+#login: admin
+#password: admin
 admin = False
 admin_ip = 0
 
 # связываем приложение и экземпляр SQLAlchemy
 db.init_app(app)
-
-@app.route('/songs', methods=['GET', 'POST'])
-def songs():
-    if request.method == 'POST':
-        #print(request)
-        artist = request.form['artist']
-        song = request.form['song']
-        album = request.form['album']
-        year = request.form['year']
-        length = request.form['length']
-        number = request.form['number']
-        add_song(db, artist, song, album, length, year, number)
-    songs_list = Song.query.all()
-    return render_template('songs.html', songs=songs_list)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -41,7 +28,7 @@ def login():
             admin = True
             admin_ip = request.remote_addr
             return render_template('ok.html')
-        return 'нет'
+        return 'login error'
     else:
         return render_template('login.html')
 
@@ -149,10 +136,6 @@ def main():
     r1 = request.args.get('key')
     r2 = request.args.get('key2')
     return r1 + ' ' + r2
-
-@app.route('/im')
-def agent():
-    return render_template('im.html')
 
 @app.route('/saved')
 def saved():
