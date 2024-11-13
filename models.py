@@ -16,7 +16,7 @@ class Suffix(db.Model):
     generator_id = db.Column(db.Integer, db.ForeignKey('generator.id'), nullable=False)
     generator = db.relationship('Generator', backref=db.backref('suffixes', lazy=True))
 
-class savedword(db.Model):
+class SavedWord(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     word = db.Column(db.String, nullable=False)
     
