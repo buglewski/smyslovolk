@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}Смысловолк{% endblock %}
+
+{% block content %}
+<div id="page" hidden>{{ page }}</div>
+<div id="number_of_pages" hidden>{{ number_of_pages }}</div>
+
+<div class="container bg-light">
+  <div class="row" id="main">
+    <!--
+    <div class="col-sm-6 mb-3 mb-sm-0">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Card title</h5>
+          <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+          <a href="#" class="card-link">Card link</a>
+          <a href="#" class="card-link">Another link</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 mb-3 mb-sm-0">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Card title</h5>
+          <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
+          <p class="card-text">.</p>
+          <a href="#" class="card-link">Card link</a>
+          <a href="#" class="card-link">Another link</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 mb-3 mb-sm-0">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Card title</h5>
+          <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+          <a href="#" class="card-link">Card link</a>
+          <a href="#" class="card-link">Another link</a>
+        </div>
+      </div>
+    </div>
+    -->
+  </div>
+</div>
+
+<div class="container bg-light meow">
+  <div class="center">
+    {% if page|int > 1 %} <a href="/">Первая;</a><a href="?page={{page|int - 1}}"> Предыдущая; </a> {% endif %}
+    Страница {{ page }} из {{ number_of_pages }}
+    {% if page|int < number_of_pages|int %}  <a href="?page={{page|int + 1}}">Следующая;</a> <a href="?page={{number_of_pages}}">Последняя</a> {% endif %}
+  </div>
+</div>
+
+<script src="{{ url_for('static', path='src/generate.js') }}"></script>
+
+<script>
+  const PAGE = document.getElementById("page").textContent;
+
+  async function get_generators(url = URL_ROOT, page = PAGE) {
+    const request = new Request(url + "generators/?page=" + page);
+    let response = await fetch(request);
+    if (response.ok) {
+      let json = await response.json();
+      return json;
+    } else {
+      alert("Ошибка HTTP: " + response.status);
+    }  
+  }
+  
+  
+  async function main() {
+    generators = await get_generators();
+    //console.log(generators);  
+    for (i = 0; i < generators.length; ++i){
+      //console.log(generators[i]);
+      create_card(generators[i]);
+    }
+  }
+  
+  main();
+  
+  //console.log(url_root.concat('/gen/admin/slavic'))
+  
+</script>
+
+{% endblock %}

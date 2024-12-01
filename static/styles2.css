@@ -1,0 +1,79 @@
+a {
+  color: rgb(0, 0, 0); /* Цвет текста */
+ }
+
+
+.addBtn {
+    background: #eee;
+    color: #444;
+    padding: 10px;
+    margin: 10px;
+    border: 2px solid #888;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .bgTTT{
+    background-color: #444;
+    color:white;
+  }
+
+  .center {
+    text-align: center;
+  }
+
+  .smyslovolk {
+    font-weight: 600;
+    font-size: larger;
+  }
+
+  .smyslovolk2 {
+    font-size: small;
+  }
+
+  .meow {
+    padding: 5px 5px 5px 5px;
+  }
+
+  .cardname {
+    float: left;
+    width: 40%; 
+    text-align: left;
+    font-weight: 600;
+  }
+
+  .carduser {
+    float: right;
+    width: 40%; 
+    text-align: right;
+    font-weight: 600;
+  }
+
+  .gen-name{
+    float: left;
+    margin-right: 20%;
+    width: 80%;
+    border: 1px solid #444;
+    padding: 15px;
+  }
+
+  .sidenav {
+    height: 100%; /* Full-height: remove this if you want "auto" height */
+    width: 20%; /* Set the width of the sidebar */
+    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+    z-index: 1; /* Stay on top */
+    top: 0; /* Stay at the top */
+    left: 0;
+    background-color: #111; /* Black */
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 20px;
+  }
+
+  .genename {
+    margin-left: 20%; /* Same as the width of the sidebar */
+    padding: 0px 10px;
+  }
+
+.card form {
+    width: 100%;
+  }

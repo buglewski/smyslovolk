@@ -2,3 +2,6 @@ __pycache__
 *_backup*
 w_*
 venv
+info.txt
+migration
+alembic.ini
