@@ -3,3 +3,5 @@ __pycache__
 w_*
 venv
 info.txt
+migration
+alembic.ini

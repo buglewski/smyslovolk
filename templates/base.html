@@ -13,27 +13,28 @@
     <!-- иконки fontawesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- кастомные стили -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='custom.css') }}">
+    <link href="{{ url_for('static', path='/styles2.css') }}" rel="stylesheet">
 </head>
 <body>
 
 <!-- навигация -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
-        <a class="navbar-brand" href="#">Мой личный сайт</a>
+        <div class="navbar-brand">
+            <div class="smyslovolk"> Смысловолк</div>
+        </div>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarNav" aria-controls="navbarNav"
                 aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse justify-content-end"
-             id="navbarNav">
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link" href="/">Главная</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/saved">Избранное</a>
+                    <a class="nav-link" id="create_generator" href="#">Создать генератор</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/login">login</a>
@@ -44,10 +45,82 @@
 </nav>
 
 <!-- контент дочерних шаблонов -->
-<div class="container my-3">
+<div id="url" hidden>{{ url_for('root') }}</div>
+<div class="container meow">
     {% block content %}
     {% endblock %}
+
+
+    
 </div>
+  
+  <!-- Модальное окно -->
+  <div class="modal fade" id="createGenModel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Заголовок модального окна</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        <div class="modal-body">
+            <form>
+                <div class="mb-3">
+                  <label class="form-label"> Имя: </label>
+                  <input type="text" class="form-control" id="modal_name_of_generator" required>
+                </div>
+                <select class="form-select" aria-label="Default select example" id="modal_mod_of_generator">
+                    <option value = "naive_generic" selected>Наивный генератор</option>
+                    <option value="py_generic">Питонный генератор</option>
+                  </select>
+            </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+          <button type="button" class="btn btn-primary" id="new_generator">Сохранить изменения</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+
+<script>
+    const modalCreateGen = new bootstrap.Modal(document.getElementById('createGenModel'));
+    const create_generator = document.getElementById("create_generator");
+    const new_generator = document.getElementById("new_generator");
+    const mod_of_new_generator = document.getElementById("modal_mod_of_generator");
+    const name_of_new_generator = document.getElementById("modal_name_of_generator");
+    const url = document.getElementById("url").textContent;
+
+    create_generator.onclick = async function cg() {
+        modalCreateGen.toggle();
+    }
+
+    new_generator.onclick = async function create_gen() {
+        const request = new Request(url + "create_generator/", {
+        method: 'POST', 
+        headers: { 
+            'Content-type': 'application/json'
+        }, 
+        body: JSON.stringify({
+            "name": name_of_new_generator.value, 
+            "title": name_of_new_generator.value, 
+            "mod" : mod_of_new_generator.value
+        })
+        });
+        
+        let response = await fetch(request);
+        if (response.ok) {
+            let j = await response.json();
+            console.log(j);
+            window.location.href = url + j + '/edit';
+        } else {
+            console.log("ERROR!");
+        }
+        modalCreateGen.hide();
+    }
+
+</script>
 
 </body>
 </html>

@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+
+{% block title %}Смысловолк{% endblock %}
+
+{% block content %}
+<div id="name" hidden>{{ name }}</div>
+<div id="user_login" hidden>{{ user_login }}</div>
+
+<div class="container bg-light" id="main">
+  
+  <div class="mb-3">
+    <label for="name_gen" class="form-label"> Имя: </label>
+    <input type="text" class="form-control" id="name_gen" disabled>
+  </div>
+
+  <div class="mb-3">
+    <label for="type_gen" class="form-label"> Тип: </label>
+    <input type="text" class="form-control" id="type_gen" disabled>
+  </div>
+
+  <div class="mb-3">
+    <label for="title" class="form-label"> Наименование: </label>
+    <input type="text" class="form-control" id="title">
+  </div>
+  <div class="mb-3">
+    <label for="description" class="form-label">Описание</label>
+    <textarea class="form-control" id="description" rows="3"></textarea>
+  </div>
+
+  <div class="mb-3">
+    <button id="save_gen"> Сохранить генератор </button>
+    <button id="delete_gen"> Удалить генератор </button>
+  </div>
+
+  <div class="row" id="main">
+    <div class="col-sm-2">
+      <div class="card">
+        <div class = "card-header"> 
+          <a href="#" id = "new_file">Новый файл</a> 
+        </div>
+        <ul class="list-group" id="list_of_files">
+        </ul>
+      </div>
+    </div>
+    <div class="col-sm-10">
+      <div class="card">
+        <div class = "card-header" id = "text_header"> 
+          <a href="#" class="cardname" id ="save_text"> Сохранить</a>  
+          <a href="#" class="carduser" id = "delete_file">Удалить файл</a>
+        </div>
+        <form id ="main_text_form">
+          <div>
+          <textarea class="form-control" id="main_text" rows="30" placeholder="Your text here..." disabled></textarea>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Модальное окно -->
+<div class="modal fade" id="create_file" tabindex="-1" aria-labelledby="createFileModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createFileModalLabel">Создать файл</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="title" class="form-label"> Наименование: </label>
+            <input type="text" class="form-control" id="modal_name_of_file" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+        <button type="button" class="btn btn-primary" id="modal_new_file">Создать</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', path='src/generate.js') }}"></script>
+
+
+<script>
+  const GENERATOR_NAME = document.getElementById("name").textContent;
+  const USER_LOGIN = document.getElementById("user_login").textContent;
+  const main_text = document.getElementById("main_text");
+  const create_file = document.getElementById("new_file");
+  const remove_file = document.getElementById("delete_file");
+  const modal_new_file = document.getElementById("modal_new_file");
+  const modalCreateFile = new bootstrap.Modal(document.getElementById('create_file'));
+  const list_of_files = document.getElementById("list_of_files");
+  const delete_button = document.getElementById("delete_gen");
+  const save_button = document.getElementById("save_gen");
+
+  var current_file = null;
+
+  
+  
+  create_file.onclick = async function toggle_modal(){
+    modalCreateFile.toggle();
+  }
+
+  modal_new_file.onclick = async function new_f(){
+    let modal_filename = document.getElementById("modal_name_of_file");
+    let fln = modal_filename.value;
+    let f = await new_file(USER_LOGIN, GENERATOR_NAME, modal_filename.value);
+    modal_filename.value = "";
+    modalCreateFile.hide();
+    if (f == 0){
+      let temp = document.createElement("li"); temp.classList.add("list-group-item", "list-group-item-action"); list_of_files.appendChild(temp);
+      temp.textContent = fln;
+      let r = fln;
+      temp.onclick = async function onk(){
+        let f = await get_file(USER_LOGIN, GENERATOR_NAME, r);
+
+        document.getElementById("main_text_form").reset();
+        current_file = r;
+
+        main_text.textContent = f;
+        main_text.removeAttribute("disabled");
+        
+      }
+    }
+  }
+  delete_button.onclick = async function delete_gen() {
+    let f = await delete_generator(USER_LOGIN, GENERATOR_NAME);
+    if (f == 0){
+      window.location.href = URL_ROOT;
+    }
+  }
+  save_button.onclick = async function create_gen() {
+        const request = new Request(url + "edit_generator/" + USER_LOGIN + '/' + GENERATOR_NAME, {
+        method: 'POST', 
+        headers: { 
+            'Content-type': 'application/json'
+        }, 
+        body: JSON.stringify({
+            "user_login": USER_LOGIN,
+            "name": GENERATOR_NAME, 
+            "title": document.getElementById("title").value, 
+            "mod" : document.getElementById("type_gen").value,
+            "description" : document.getElementById("description").value
+        })
+        });
+        console.log(request);
+        let response = await fetch(request);
+        if (response.ok) {
+
+        } else {
+            console.log("ERROR!");
+        }
+    }
+
+  remove_file.onclick = async function save_f() {
+    if (!current_file) return;
+    delete_file(USER_LOGIN, GENERATOR_NAME, current_file);
+    location.reload();
+  } 
+
+  save_text.onclick = async function save_f() {
+    if (!current_file) return;
+    let f = await save_file(USER_LOGIN, GENERATOR_NAME, current_file, main_text.value);
+  }
+    
+  async function main() {
+    generator = await get_generator(USER_LOGIN, GENERATOR_NAME);
+    console.log(generator);
+    const name_gen = document.getElementById("name_gen"); name_gen.value = generator.generator.name;
+    const type_gen = document.getElementById("type_gen"); type_gen.value = generator.generator.mod;
+    const title = document.getElementById("title"); title.value = generator.generator.title;
+    const description = document.getElementById("description"); description.textContent = generator.generator.description;
+    
+    const save_text = document.getElementById("save_text");
+
+    for (i in generator.files){
+      let temp = document.createElement("li"); temp.classList.add("list-group-item", "list-group-item-action"); list_of_files.appendChild(temp);
+      temp.textContent = generator.files[i];
+      let r = generator.files[i];
+      temp.onclick = async function onk(){
+        let f = await get_file(generator.generator.user_login, generator.generator.name, r);
+
+        document.getElementById("main_text_form").reset();
+        current_file = r;
+
+        main_text.textContent = f;
+        main_text.removeAttribute("disabled");
+        
+      }
+        
+    }
+  }
+  
+  main();
+  
+  //console.log(url_root.concat('/gen/admin/slavic'))
+  
+</script>
+
+{% endblock %}
