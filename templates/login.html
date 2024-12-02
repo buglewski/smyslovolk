@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Логин{% endblock %}
+
+{% block content %}
+
+<div class="flex p-4 m-6 justify-center">
+  <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" method="POST">
+    <div class="mb-4">
+      <label class="form-label" for="username">
+        Username
+      </label>
+      <input class="form-control" id="username" name="username" type="text">
+    </div>
+    <div class="mb-6">
+      <label class="form-label" for="password">
+        Password
+      </label>
+      <input class="form-control" id="password" name="password" type="password">
+    </div>
+    <div class="flex items-center justify-between">
+      <button type="submit">
+        Sign In
+      </button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

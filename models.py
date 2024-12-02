@@ -21,7 +21,7 @@ class User(SQLModel, table=True):
     login : str = Field(index=True, nullable=False, primary_key=True, min_length=3, max_length=20)
     name : str = Field(index=True, nullable=False, min_length=3, max_length=50)
     email : str | None = Field(default=None, max_length=50)
-    password_hash : str | None = Field(default=None)
+    hashed_password : str | None = Field(default=None)
     admin : bool = Field(default=False)
 
 

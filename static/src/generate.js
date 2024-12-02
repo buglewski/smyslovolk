@@ -1,4 +1,3 @@
-const URL_ROOT = document.getElementById("url").textContent;
 const CONTAINER = document.getElementById("main");
 
 async function generate(user_login, name, que = "", url = URL_ROOT) {
@@ -139,6 +138,7 @@ async function generate(user_login, name, que = "", url = URL_ROOT) {
     card_subtitle.textContent = generator.description;
 
     card_name.href = url + generator.user_login + '/' + generator.name + '/edit';
+    card_user.href = url + generator.user_login;
     card_title_a.href = url + generator.user_login + '/' + generator.name;
     
     card_generate.textContent = "Сгенерировать";

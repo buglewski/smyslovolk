@@ -4,6 +4,7 @@ import requests
 import asyncio
 import aiohttp
 from tqdm import tqdm
+from main import get_password_hash
 
 URL = 'http://127.0.0.1:8000/gen/admin/meow/'
 
@@ -53,6 +54,7 @@ if __name__ == '__main__':
     #api = Api(URL)
 
     #run_case(api.async_http_get, path='', times=N)
-    print(os.listdir("."))
+    #print(os.listdir("."))
+    print(get_password_hash("333501"))
 
     

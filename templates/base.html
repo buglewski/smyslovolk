@@ -36,8 +36,17 @@
                 <li class="nav-item">
                     <a class="nav-link" id="create_generator" href="#">Создать генератор</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/login">login</a>
+                <li class="nav-item" id="nav-profile">
+                    <a class="nav-link" href="/{{ user_login }}">Профиль</a>
+                </li>
+                <li class="nav-item" id="nav-login">
+                    <a class="nav-link" href="/login">Войти</a>
+                </li>
+                <li class="nav-item" id="nav-logout">
+                    <a class="nav-link" href="/logout">Выйти</a>
+                </li>
+                <li class="nav-item" id="nav-register">
+                    <a class="nav-link" href="/register">Регистрация</a>
                 </li>
             </ul>
         </div>
@@ -46,12 +55,16 @@
 
 <!-- контент дочерних шаблонов -->
 <div id="url" hidden>{{ url_for('root') }}</div>
+<div id="current_user" hidden>{{ current_user }}</div>
+
+<script>
+const URL_ROOT = document.getElementById("url").textContent;
+const CURRENT_USER = document.getElementById("current_user").textContent;
+</script>
+
 <div class="container meow">
     {% block content %}
     {% endblock %}
-
-
-    
 </div>
   
   <!-- Модальное окно -->
@@ -85,24 +98,42 @@
   
 
 <script>
+    const nav_login = document.getElementById("nav-login");
+    const nav_logout = document.getElementById("nav-logout");
+    const nav_profile = document.getElementById("nav-profile");
+    const nav_register = document.getElementById("nav-register");
     const modalCreateGen = new bootstrap.Modal(document.getElementById('createGenModel'));
     const create_generator = document.getElementById("create_generator");
     const new_generator = document.getElementById("new_generator");
     const mod_of_new_generator = document.getElementById("modal_mod_of_generator");
     const name_of_new_generator = document.getElementById("modal_name_of_generator");
-    const url = document.getElementById("url").textContent;
+    
+    console.log(CURRENT_USER)
+
+    if (CURRENT_USER == "0"){ 
+        nav_login.hidden = false;
+        nav_register.hidden = false;
+        nav_profile.hidden = true;
+        nav_logout.hidden = true;
+    } else {
+        nav_login.hidden = true;
+        nav_register.hidden = true;
+        nav_profile.hidden = false;
+        nav_logout.hidden = false;
+    }
 
     create_generator.onclick = async function cg() {
         modalCreateGen.toggle();
     }
 
     new_generator.onclick = async function create_gen() {
-        const request = new Request(url + "create_generator/", {
+        const request = new Request(URL_ROOT + "create_generator/", {
         method: 'POST', 
         headers: { 
             'Content-type': 'application/json'
         }, 
         body: JSON.stringify({
+            "user_login" : CURRENT_USER,
             "name": name_of_new_generator.value, 
             "title": name_of_new_generator.value, 
             "mod" : mod_of_new_generator.value
@@ -113,7 +144,7 @@
         if (response.ok) {
             let j = await response.json();
             console.log(j);
-            window.location.href = url + j + '/edit';
+            window.location.href = URL_ROOT + j + '/edit';
         } else {
             console.log("ERROR!");
         }
