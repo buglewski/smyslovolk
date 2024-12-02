@@ -87,19 +87,26 @@
 
 <script>
   const GENERATOR_NAME = document.getElementById("name").textContent;
-  const USER_LOGIN = document.getElementById("user_login").textContent;
+  const USER_LOGIN = document.getElementById("user_login").textContent;  
   const main_text = document.getElementById("main_text");
   const create_file = document.getElementById("new_file");
   const remove_file = document.getElementById("delete_file");
   const modal_new_file = document.getElementById("modal_new_file");
   const modalCreateFile = new bootstrap.Modal(document.getElementById('create_file'));
   const list_of_files = document.getElementById("list_of_files");
+  const save_text = document.getElementById("save_text");
   const delete_button = document.getElementById("delete_gen");
   const save_button = document.getElementById("save_gen");
 
   var current_file = null;
 
-  
+  if (CURRENT_USER != USER_LOGIN){
+    create_file.hidden = true;
+    remove_file.hidden = true;
+    save_text.hidden = true;
+    delete_button.hidden = true;
+    save_button.hidden = true;
+  }
   
   create_file.onclick = async function toggle_modal(){
     modalCreateFile.toggle();
@@ -134,7 +141,7 @@
     }
   }
   save_button.onclick = async function create_gen() {
-        const request = new Request(url + "edit_generator/" + USER_LOGIN + '/' + GENERATOR_NAME, {
+        const request = new Request(URL_ROOT + "edit_generator/" + USER_LOGIN + '/' + GENERATOR_NAME, {
         method: 'POST', 
         headers: { 
             'Content-type': 'application/json'

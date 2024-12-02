@@ -3,6 +3,7 @@
 {% block title %}Смысловолк{% endblock %}
 
 {% block content %}
+<div id="user" hidden>{{ user }}</div>
 <div id="page" hidden>{{ page }}</div>
 <div id="number_of_pages" hidden>{{ number_of_pages }}</div>
 
@@ -23,13 +24,15 @@
 <script src="{{ url_for('static', path='src/generate.js') }}"></script>
 
 <script>
+  const USER = document.getElementById("user").textContent;
   const PAGE = document.getElementById("page").textContent;
 
-  async function get_generators(url = URL_ROOT, page = PAGE) {
-    const request = new Request(url + "generators/?page=" + page);
+  async function get_generators(page = PAGE, user = USER, url = URL_ROOT) {
+    const request = new Request(url + 'generators/' + user + "/?page=" + page);
     let response = await fetch(request);
     if (response.ok) {
       let json = await response.json();
+      console.log(json);
       return json;
     } else {
       alert("Ошибка HTTP: " + response.status);
